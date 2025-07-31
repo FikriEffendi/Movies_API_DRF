@@ -3,14 +3,39 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from watchlist_app.models import WatchList
 
-@api_view()
-def movie_list(request):
-    movies=WatchList.objects.all()
-    serializer=MovieSerializer(movies,many=True)
-    return Response(serializer.data)
+def getObject(pk):
+    return WatchList.objects.get(pk=pk)
 
-@api_view()
+@api_view(['GET','POST'])
+def movie_list(request):
+    if request.method=='GET':
+        movies=WatchList.objects.all()
+        serializer=MovieSerializer(movies,many=True)
+        return Response(serializer.data)
+    elif request.method=='POST':
+        serializer=MovieSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    else:
+        return Response(serializer.errors)
+
+
+@api_view(['GET','PUT','DELETE'])
 def movie_detail(request,pk):
-    movie=WatchList.objects.get(pk=pk)
-    serializer=MovieSerializer(movie)
-    return Response(serializer.data)
+    if(request.method=='GET'):
+        movie=getObject(pk)
+        serializer=MovieSerializer(movie)
+        return Response(serializer.data)
+    elif(request.method=='PUT'):
+        movie=getObject(pk)
+        serializer=MovieSerializer(movie,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    elif(request.method=='DELETE'):
+        movie=getObject(pk)
+        movie.delete()
+        return Response({'message':'Deleted successfully'})
+    else:
+        return Response(serializer.errors)
