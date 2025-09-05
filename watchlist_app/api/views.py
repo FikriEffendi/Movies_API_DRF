@@ -6,7 +6,7 @@ from watchlist_app.models import WatchList,StreamPlatform,Review
 from rest_framework import status
 from rest_framework import generics
 
-class ReviewDetail(generics.RetrieveAPIView):
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
