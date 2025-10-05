@@ -13,8 +13,10 @@ class StreamPlatform(models.Model):
 class WatchList(models.Model):
     title = models.CharField(max_length=100)
     story_line = models.TextField()
-    active = models.BooleanField(default=True)
     platform = models.ForeignKey(StreamPlatform, on_delete=models.CASCADE, related_name='watchlist',default=1)
+    active = models.BooleanField(default=True)
+    average_rating = models.FloatField(default=0)
+    number_rating = models.IntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -24,10 +26,9 @@ class WatchList(models.Model):
     
 class Review(models.Model):
     review_user=models.ForeignKey(User, on_delete=models.CASCADE)
-    review_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     description = models.CharField(max_length=200)
+    watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
